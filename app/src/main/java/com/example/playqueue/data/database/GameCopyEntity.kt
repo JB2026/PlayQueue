@@ -9,7 +9,7 @@ import com.example.playqueue.data.GameStatus
  */
 @Entity(tableName = "game_copies")
 data class GameCopyEntity(
-    @PrimaryKey val id: Long,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val gameID: Long,
     val copyNumber: Int,
     val status: GameStatus,

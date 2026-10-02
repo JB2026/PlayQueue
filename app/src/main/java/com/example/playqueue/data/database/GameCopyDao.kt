@@ -38,8 +38,8 @@ interface GameCopyDao {
      * A method to get all matching game copies for a specific ID.
      * @param gameId The game ID to make the query with.
      */
-    @Query("SELECT * FROM game_copies WHERE gameID = :gameId ORDER BY copyNumber ASC")
-    fun getAllCopies(gameId: Long): Flow<List<GameCopyEntity>>
+    @Query("SELECT * FROM game_copies WHERE gameID = :gameID ORDER BY copyNumber ASC")
+    fun getAllCopies(gameID: Long): Flow<List<GameCopyEntity>>
 
     /**
      * A suspend method to get a specific game copy.
@@ -47,4 +47,11 @@ interface GameCopyDao {
      */
     @Query("SELECT * FROM game_copies WHERE id = :id")
     fun getCopy(id: Long): Flow<GameCopyEntity?>
+
+    /**
+     * A suspend method to get the numbers of copies of a game.
+     * @param gameId The ID of the game to get from the database.
+     */
+    @Query("SELECT COALESCE(MAX(copyNumber), 0) FROM game_copies WHERE gameId = :gameID")
+    suspend fun getMaxCopyNumber(gameID: Long): Int
 }

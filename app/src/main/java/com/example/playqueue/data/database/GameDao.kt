@@ -58,6 +58,6 @@ interface GameDao {
      * A suspend method to get a specific base game by BGG ID.
      * @param bggId The BGG ID of the base game to get from the database.
      */
-    @Query("SELECT * FROM games WHERE bggID = :bggId LIMIT 1")
-     fun getGameByBggId(bggId: Int): GameEntity?
+    @Query("SELECT * FROM games WHERE bggID = :bggID LIMIT 1")
+     fun getGameByBggId(bggID: Int): GameEntity?
 }

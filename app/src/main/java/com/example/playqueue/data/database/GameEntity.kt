@@ -9,7 +9,7 @@ import com.example.playqueue.data.GameSource
  */
 @Entity(tableName = "games")
 data class GameEntity(
-    @PrimaryKey val id: Long,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val title: String?,
     val imageURL: String?,
     val thumbnailURL: String?,

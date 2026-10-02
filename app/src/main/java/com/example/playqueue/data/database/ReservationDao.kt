@@ -47,8 +47,8 @@ interface ReservationDao {
      * A method to get all matching reservations for a specific game copy ID.
      * @param copyId The game copy ID to make the query with.
      */
-    @Query("SELECT * FROM reservations WHERE gameCopyID = :copyId || '%'")
-    fun getReservationsForCopy(copyId: Long): Flow<List<ReservationEntity>>
+    @Query("SELECT * FROM reservations WHERE gameCopyID = :copyID || '%'")
+    fun getReservationsForCopy(copyID: Long): Flow<List<ReservationEntity>>
 
     /**
      * A method to get all matching reservations for a specific game copy ID in a specific range.
@@ -60,14 +60,30 @@ interface ReservationDao {
         """
         SELECT res.* FROM reservations AS res
         INNER JOIN game_copies AS gc ON res.gameCopyId = gc.id
-        WHERE gc.gameId = :gameId
+        WHERE gc.gameId = :gameID
           AND res.startDate < :rangeEnd
           AND res.endDate > :rangeStart
           AND res.status != 'CANCELLED'
         ORDER BY res.startDate ASC
         """
     )
-    fun getMatchingReservationsInRange(gameId: Long, rangeStart: Long, rangeEnd: Long): Flow<List<ReservationEntity>>
+    fun getMatchingReservationsInRange(gameID: Long, rangeStart: Long, rangeEnd: Long): Flow<List<ReservationEntity>>
+
+    /**
+     * A method to get all matching reservations for a specific game copy ID that are not complete.
+     * @param gameId The game ID to make the query with.
+     */
+    @Query(
+        """
+        SELECT res.* FROM reservations AS res
+        INNER JOIN game_copies AS gc ON res.gameCopyId = gc.id
+        WHERE gc.gameId = :gameID
+          AND res.status != 'CANCELLED'
+          AND res.status != 'COMPLETE'
+        ORDER BY res.startDate ASC
+        """
+    )
+    fun getMatchingReservations(gameID: Long): Flow<List<ReservationEntity>>
 
     /**
      * A method to get all reservations for a specific time range.

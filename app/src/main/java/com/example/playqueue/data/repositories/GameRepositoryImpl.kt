@@ -19,12 +19,13 @@ import kotlin.time.Clock
 
 interface GameRepository {
     fun addGameFromRemote(details: GameDetails): Long
-    suspend fun addManualGame(title: String, description: String, minPlayers: Int, maxPlayers: Int, playtimeMinutes: Int): Long
+    suspend fun addManualGame(title: String, description: String, minPlayers: Int, maxPlayers: Int, playtimeMinutes: Int, category: String): Long
     suspend fun updateGame(game: GameEntity)
     suspend fun deleteGame(gameID: Long): Result<Unit>
     fun getAllGames(): Flow<List<GameEntity>>
     fun searchCatalog(query: String): Flow<List<GameEntity>>
     fun getGameCopies(gameID: Long): Flow<GameAndCopies>
+    fun getGame(gameID: Long): Flow<GameEntity>
     suspend fun addCopy(gameID: Long, copyNumber: Int): Long
 }
 
@@ -43,10 +44,12 @@ class GameRepositoryImpl @Inject constructor(
         description: String,
         minPlayers: Int,
         maxPlayers: Int,
-        playtimeMinutes: Int
+        playtimeMinutes: Int,
+        category: String
     ): Long {
         val game = GameEntity(
             title = title,
+            description = description,
             minPlayers = minPlayers,
             maxPlayers = maxPlayers,
             minPlayTimeMinutes = playtimeMinutes,
@@ -55,7 +58,7 @@ class GameRepositoryImpl @Inject constructor(
             dateAdded = Clock.System.now().toEpochMilliseconds(),
             imageURL = null,
             thumbnailURL = null,
-            category = null,
+            category = category,
             bggID = null
         )
 
@@ -100,6 +103,10 @@ class GameRepositoryImpl @Inject constructor(
                 GameAndCopies(game, gameCopies)
             }
         }.filterNotNull()
+
+    override fun getGame(gameID: Long): Flow<GameEntity> {
+        return gameDao.getGame(gameID).filterNotNull()
+    }
 
     override suspend fun addCopy(gameID: Long, copyNumber: Int): Long {
         val maxCopyNumber = gameCopyDao.getMaxCopyNumber(gameID)

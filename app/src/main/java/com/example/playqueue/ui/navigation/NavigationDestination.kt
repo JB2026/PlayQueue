@@ -21,3 +21,19 @@ enum class NavigationDestination(
     RESERVATIONS("reservations", "Reservations", Icons.Default.CalendarMonth, "Reservations"),
     SEARCH("search", "Search", Icons.Default.Search, "Search")
 }
+
+/**
+ * A sealed class of possible routes throughout the application.
+ */
+sealed class PlayQueueRoutes(val route: String) {
+
+    // The game detail screen
+    object GameDetail: PlayQueueRoutes("detail/{id}/{isManual}"){
+        fun createRoute(id: Long, isManual: Boolean) = "detail/$id/$isManual"
+    }
+
+    // The edit game screen
+    object GameEdit: PlayQueueRoutes("edit/{id}/{isEditing}"){
+        fun createRoute(id: Long = -1, isEditing: Boolean) = "edit/$id/$isEditing"
+    }
+}

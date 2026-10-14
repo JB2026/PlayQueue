@@ -28,11 +28,11 @@ object DatabaseModule {
      */
     @Provides
     @Singleton
-    fun provideRecipeDatabase(@ApplicationContext context: Context): PlayQueueDatabase {
+    fun provideDatabase(@ApplicationContext context: Context): PlayQueueDatabase {
         return Room.databaseBuilder(
             context = context,
             klass = PlayQueueDatabase::class.java,
-            name = "recipe_db"
+            name = "game_db"
         )
             .addTypeConverter(Converter())
             .build()

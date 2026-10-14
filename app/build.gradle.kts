@@ -51,6 +51,8 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material.icons.extended)
+    implementation(libs.coil3.coil.compose)
+    implementation(libs.coil3.coil.network.okhttp)
 
     // Hilt Dependencies
     implementation(libs.hilt.android)

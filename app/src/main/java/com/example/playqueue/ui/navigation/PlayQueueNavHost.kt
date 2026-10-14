@@ -3,8 +3,12 @@ package com.example.playqueue.ui.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import com.example.playqueue.data.GameSource
+import com.example.playqueue.ui.screens.AddEditGameScreen
 import com.example.playqueue.ui.screens.InventoryScreen
 import com.example.playqueue.ui.screens.ReservationsScreen
 import com.example.playqueue.ui.screens.SearchScreen
@@ -28,11 +32,38 @@ fun PlayQueueNavHost(
             // Main App Tabs
             composable(destination.route) {
                 when (destination) {
-                    NavigationDestination.INVENTORY -> InventoryScreen()
+                    NavigationDestination.INVENTORY -> InventoryScreen(
+                        onEditSelect = { game ->
+                            navController.navigate(
+                                PlayQueueRoutes.GameEdit.createRoute(id = game.id, isEditing = true)
+                            )
+                        },
+                        onAddSelect = {
+                            navController.navigate(
+                                PlayQueueRoutes.GameEdit.createRoute(isEditing = false)
+                            )
+                        },
+                        onItemSelect = { game ->
+                            navController.navigate(
+                                PlayQueueRoutes.GameDetail.createRoute(game.id, isManual = game.source == GameSource.MANUAL)
+                            )
+                        }
+                    )
                     NavigationDestination.TRACKER -> TrackerScreen()
                     NavigationDestination.RESERVATIONS -> ReservationsScreen()
                     NavigationDestination.SEARCH -> SearchScreen()
                 }
+            }
+
+            // The edit recipe screen
+            composable(
+                route = PlayQueueRoutes.GameEdit.route,
+                arguments = listOf(
+                    navArgument("id") { type = NavType.LongType },
+                    navArgument("isEditing") { type = NavType.BoolType }
+                )
+            ) {
+                AddEditGameScreen(onClose = { navController.popBackStack() })
             }
         }
     }

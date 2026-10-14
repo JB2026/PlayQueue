@@ -45,14 +45,14 @@ interface ReservationDao {
 
     /**
      * A method to get all matching reservations for a specific game copy ID.
-     * @param copyId The game copy ID to make the query with.
+     * @param copyID The game copy ID to make the query with.
      */
     @Query("SELECT * FROM reservations WHERE gameCopyID = :copyID || '%'")
     fun getReservationsForCopy(copyID: Long): Flow<List<ReservationEntity>>
 
     /**
      * A method to get all matching reservations for a specific game copy ID in a specific range.
-     * @param gameId The game ID to make the query with.
+     * @param gameID The game ID to make the query with.
      * @param rangeStart The date range start.
      * @param rangeEnd The date range end.
      */
@@ -71,7 +71,7 @@ interface ReservationDao {
 
     /**
      * A method to get all matching reservations for a specific game copy ID that are not complete.
-     * @param gameId The game ID to make the query with.
+     * @param gameID The game ID to make the query with.
      */
     @Query(
         """

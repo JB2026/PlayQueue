@@ -93,7 +93,7 @@ fun AddEditGameView(
     var gameDescription by remember { mutableStateOf(game?.description ?: "") }
     var gameMinPlayers by remember { mutableIntStateOf(game?.minPlayers ?: 1) }
     var gameMaxPlayers by remember { mutableIntStateOf(game?.maxPlayers ?: 1) }
-    var gamePlaytimeMinutes by remember { mutableIntStateOf(game?.maxPlayTimeMinutes ?: 1) }
+    var gamePlaytimeMinutes by remember { mutableIntStateOf(game?.playTimeMinutes ?: 1) }
     var gameCategory by remember { mutableStateOf(game?.category ?: "") }
 
     Scaffold(

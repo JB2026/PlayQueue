@@ -28,8 +28,8 @@ enum class NavigationDestination(
 sealed class PlayQueueRoutes(val route: String) {
 
     // The game detail screen
-    object GameDetail: PlayQueueRoutes("detail/{id}/{isManual}"){
-        fun createRoute(id: Long, isManual: Boolean) = "detail/$id/$isManual"
+    object GameDetail: PlayQueueRoutes("detail/{databaseID}/{bggID}/{isManual}"){
+        fun createRoute(databaseID: Long?, bggID: Int?, isManual: Boolean) = "detail/$databaseID/$bggID/$isManual"
     }
 
     // The edit game screen

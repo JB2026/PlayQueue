@@ -7,8 +7,9 @@ import com.example.playqueue.data.database.GameCopyEntity
 import com.example.playqueue.data.database.GameDao
 import com.example.playqueue.data.database.GameEntity
 import com.example.playqueue.data.database.ReservationDao
+import com.example.playqueue.data.models.BggGameDetails
 import com.example.playqueue.data.models.GameAndCopies
-import com.example.playqueue.data.models.GameDetails
+import com.example.playqueue.data.models.createEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.count
@@ -17,8 +18,11 @@ import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 import kotlin.time.Clock
 
+/**
+ * An interface for the game repository defining all main methods accessible methods.
+ */
 interface GameRepository {
-    fun addGameFromRemote(details: GameDetails): Long
+    suspend fun addGameFromRemote(details: BggGameDetails): Long
     suspend fun addManualGame(title: String, description: String, minPlayers: Int, maxPlayers: Int, playtimeMinutes: Int, category: String): Long
     suspend fun updateGame(game: GameEntity)
     suspend fun deleteGame(gameID: Long): Result<Unit>
@@ -35,8 +39,13 @@ class GameRepositoryImpl @Inject constructor(
     private val reservationDao: ReservationDao
 ): GameRepository {
 
-    override fun addGameFromRemote(details: GameDetails): Long {
-        TODO("Not yet implemented")
+    override suspend fun addGameFromRemote(details: BggGameDetails): Long {
+        // Do not insert and already existing game.
+        if (gameDao.getGameByBggId(details.bggId) != null) {
+            return 0
+        }
+
+        return gameDao.insert(details.createEntity())
     }
 
     override suspend fun addManualGame(
@@ -52,8 +61,7 @@ class GameRepositoryImpl @Inject constructor(
             description = description,
             minPlayers = minPlayers,
             maxPlayers = maxPlayers,
-            minPlayTimeMinutes = playtimeMinutes,
-            maxPlayTimeMinutes = playtimeMinutes,
+            playTimeMinutes = playtimeMinutes,
             source = GameSource.MANUAL,
             dateAdded = Clock.System.now().toEpochMilliseconds(),
             imageURL = null,

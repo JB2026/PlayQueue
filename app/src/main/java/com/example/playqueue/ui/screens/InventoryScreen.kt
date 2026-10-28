@@ -53,14 +53,6 @@ fun EmptyView() {
 }
 
 /**
- * A composable for the Inventory screen.
- */
-@Composable
-fun InventoryScreen() {
-    EmptyView()
-}
-
-/**
  * A composable for the inventory screen.
  * @param onEditSelect A closure to call to edit a game.
  * @param onAddSelect The closure to call when adding a game.

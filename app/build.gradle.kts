@@ -53,8 +53,6 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material.icons.extended)
-    implementation(libs.coil3.coil.compose)
-    implementation(libs.coil3.coil.network.okhttp)
 
     // Hilt Dependencies
     implementation(libs.hilt.android)
@@ -66,6 +64,7 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.room.ktx)
 
+    // API
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.retrofit2.kotlinx.serialization.converter)
@@ -73,6 +72,10 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.xmlpull)
     implementation(libs.converter.scalars)
+
+    // Coil
+    implementation(libs.coil3.coil.compose)
+    implementation(libs.coil3.coil.network.okhttp)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

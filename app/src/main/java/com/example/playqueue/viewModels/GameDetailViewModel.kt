@@ -3,6 +3,7 @@ package com.example.playqueue.viewModels
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playqueue.data.database.GameEntity
 import com.example.playqueue.data.models.GameAndCopies
 import com.example.playqueue.data.models.createEntity
 import com.example.playqueue.data.repositories.BggRepository
@@ -25,15 +26,52 @@ class GameDetailViewModel @Inject constructor(
     private val bggRepository: BggRepository,
     savedStateHandle: SavedStateHandle
 ): ViewModel() {
-    private val gameDatabaseID: Long = checkNotNull(savedStateHandle["databaseID"])
+    private var gameDatabaseID: Long = checkNotNull(savedStateHandle["databaseID"])
     private val gameBggID: Int = checkNotNull(savedStateHandle["bggID"])
     private val isManual: Boolean = checkNotNull(savedStateHandle["isManual"])
 
     private val _uiState = MutableStateFlow<UIState<GameAndCopies>>(UIState.Loading)
     val uiState: StateFlow<UIState<GameAndCopies>> = _uiState.asStateFlow()
 
+    val isInInventory: Boolean
+        get() = gameDatabaseID != -1L
+
     init {
         fetchGameAndCopies()
+    }
+
+    fun addGame(game: GameEntity) {
+        viewModelScope.launch {
+            gameDatabaseID = gameRepository.addGame(game)
+            fetchGameAndCopies()
+        }
+    }
+
+    fun removeGame(game: GameEntity, onRemove: () -> Unit) {
+        viewModelScope.launch {
+            gameRepository.deleteGame(game.id)
+                .onSuccess {
+                    onRemove()
+                }
+                .onFailure {
+                    print("Failed to delete")
+                //TODO: Throw or send something
+                }
+        }
+    }
+
+    fun addCopy(game: GameEntity) {
+        viewModelScope.launch {
+            gameRepository.addCopy(game.id)
+            fetchGameAndCopies()
+        }
+    }
+
+    fun removeCopy(game: GameEntity) {
+        viewModelScope.launch {
+            gameRepository.removeCopy(game.id)
+            fetchGameAndCopies()
+        }
     }
 
     private fun fetchGameAndCopies() {

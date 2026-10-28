@@ -12,8 +12,8 @@ import com.example.playqueue.data.models.GameAndCopies
 import com.example.playqueue.data.models.createEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 import kotlin.time.Clock
@@ -23,6 +23,8 @@ import kotlin.time.Clock
  */
 interface GameRepository {
     suspend fun addGameFromRemote(details: BggGameDetails): Long
+
+    suspend fun addGame(game: GameEntity): Long
     suspend fun addManualGame(title: String, description: String, minPlayers: Int, maxPlayers: Int, playtimeMinutes: Int, category: String): Long
     suspend fun updateGame(game: GameEntity)
     suspend fun deleteGame(gameID: Long): Result<Unit>
@@ -30,7 +32,8 @@ interface GameRepository {
     fun searchCatalog(query: String): Flow<List<GameEntity>>
     fun getGameCopies(gameID: Long): Flow<GameAndCopies>
     fun getGame(gameID: Long): Flow<GameEntity>
-    suspend fun addCopy(gameID: Long, copyNumber: Int): Long
+    suspend fun addCopy(gameID: Long): Long
+    suspend fun removeCopy(gameID: Long)
 }
 
 class GameRepositoryImpl @Inject constructor(
@@ -46,6 +49,10 @@ class GameRepositoryImpl @Inject constructor(
         }
 
         return gameDao.insert(details.createEntity())
+    }
+
+    override suspend fun addGame(game: GameEntity): Long {
+        return gameDao.insert(game)
     }
 
     override suspend fun addManualGame(
@@ -79,7 +86,7 @@ class GameRepositoryImpl @Inject constructor(
 
     override suspend fun deleteGame(gameID: Long): Result<Unit> {
         val copiesCount = gameCopyDao.getMaxCopyNumber(gameID)
-        val reservationCount = reservationDao.getMatchingReservations(gameID).count()
+        val reservationCount = reservationDao.countForGame(gameID)
         val game = gameDao.getGame(gameID).firstOrNull()
 
         game?.let { game ->
@@ -116,7 +123,7 @@ class GameRepositoryImpl @Inject constructor(
         return gameDao.getGame(gameID).filterNotNull()
     }
 
-    override suspend fun addCopy(gameID: Long, copyNumber: Int): Long {
+    override suspend fun addCopy(gameID: Long): Long {
         val maxCopyNumber = gameCopyDao.getMaxCopyNumber(gameID)
         val gameCopy = GameCopyEntity(
             gameID = gameID,
@@ -126,5 +133,11 @@ class GameRepositoryImpl @Inject constructor(
             notes = ""
         )
        return gameCopyDao.insert(gameCopy)
+    }
+
+    override suspend fun removeCopy(gameID: Long) {
+        gameCopyDao.getAllCopies(gameID).first()
+            .maxByOrNull { it.copyNumber }
+            ?.let { gameCopyDao.delete(it) }
     }
 }

@@ -83,7 +83,7 @@ fun PlayQueueNavHost(
                     navArgument("isManual") { type = NavType.BoolType }
                 )
             ) {
-                GameDetailScreen()
+                GameDetailScreen(onClose = { navController.popBackStack() })
             }
         }
     }

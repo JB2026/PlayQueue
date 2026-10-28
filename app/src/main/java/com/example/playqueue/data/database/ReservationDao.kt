@@ -107,4 +107,11 @@ interface ReservationDao {
      */
     @Query("SELECT * FROM reservations WHERE status = :status ORDER BY endDate ASC")
     fun getReservationsByStatus(status: ReservationStatus): Flow<List<ReservationEntity>>
+
+    /**
+     * A suspend method to get the count of reservations with the matching game ID.
+     * @param gameID The game copy ID to match on.
+     */
+    @Query("SELECT COUNT(*) FROM reservations WHERE gameCopyID = :gameID")
+    suspend fun countForGame(gameID: Long): Int
 }

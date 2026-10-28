@@ -12,6 +12,7 @@ import com.example.playqueue.data.ReservationStatus
 data class ReservationEntity(
     @PrimaryKey val id: Long,
     val gameCopyID: Long,
+    val gameID: Long,
     val customerName: String,
     val startDate: Long,
     val endDate: Long,
